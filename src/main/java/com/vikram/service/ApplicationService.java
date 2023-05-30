@@ -8,4 +8,6 @@ public interface ApplicationService {
     TokenResponse registerUser(UserAccount userAccount);
 
     TokenResponse generateToken(UserAccount userAccount);
+
+    UserAccount extractTokenInformation(String jwtToken);
 }

@@ -18,12 +18,12 @@ public class UserArtifactSteps {
     @Given("a new user with details")
     public void givenUserDetails(String data) {
         UserAccount userAccount = new Gson().fromJson(data, UserAccount.class);
-        testContext.addToContext(TestContext.USER_ACCOUNT_REQ, userAccount);
+        testContext.addToContext(TestContext.USER_ACCOUNT, userAccount);
     }
 
     @Given("a user with login details")
     public void userWithLoginDetails(String data) {
         UserAccount userAccount = new Gson().fromJson(data, UserAccount.class);
-        testContext.addToContext(TestContext.USER_ACCOUNT_REQ, userAccount);
+        testContext.addToContext(TestContext.USER_ACCOUNT, userAccount);
     }
 }

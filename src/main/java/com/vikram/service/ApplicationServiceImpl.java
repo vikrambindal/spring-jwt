@@ -44,4 +44,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         final var jwtToken = jwtService.generateToken(userEntity.get().getEmail());
         return new TokenResponse(jwtToken);
     }
+
+    @Override
+    public UserAccount extractTokenInformation(String jwtToken) {
+        jwtToken = jwtToken.substring("Bearer ".length());
+        String email = jwtService.extractUsername(jwtToken);
+        Optional<UserEntity> userEntityOptional = userEntityRepository.findByEmail(email);
+        if (userEntityOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Invalid user");
+        }
+
+        return userEntityOptional.get().adaptToUserAccount();
+    }
 }

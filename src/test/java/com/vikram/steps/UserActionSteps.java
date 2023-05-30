@@ -19,15 +19,24 @@ public class UserActionSteps {
 
     @When("a user registers in the application")
     public void userRegistersInApplication() {
-        UserAccount userAccount = (UserAccount) testContext.getFromContext(TestContext.USER_ACCOUNT_REQ);
+        UserAccount userAccount = (UserAccount) testContext.getFromContext(TestContext.USER_ACCOUNT);
         ResponseEntity<TokenResponse> tokenResponseResponseEntity = appRestClient.createUser(userAccount);
         testContext.addToContext(TestContext.TOKEN_RESPONSE, tokenResponseResponseEntity);
     }
 
     @When("a user generates a token")
     public void userGeneratesToken() {
-        UserAccount userAccount = (UserAccount) testContext.getFromContext(TestContext.USER_ACCOUNT_REQ);
+        UserAccount userAccount = (UserAccount) testContext.getFromContext(TestContext.USER_ACCOUNT);
         ResponseEntity<TokenResponse> tokenResponseResponseEntity = appRestClient.generateToken(userAccount);
         testContext.addToContext(TestContext.TOKEN_RESPONSE, tokenResponseResponseEntity);
+    }
+
+    @When("user invokes greeting application")
+    public void userInvokesGreetApplication() {
+        ResponseEntity<TokenResponse> tokenResponseResponseEntity =
+                (ResponseEntity<TokenResponse>) testContext.getFromContext(TestContext.TOKEN_RESPONSE);
+        ResponseEntity<UserAccount> userAccountResponseEntity =
+                appRestClient.generateToken(tokenResponseResponseEntity.getBody().token());
+        testContext.addToContext(TestContext.USER_ACCOUNT, userAccountResponseEntity);
     }
 }

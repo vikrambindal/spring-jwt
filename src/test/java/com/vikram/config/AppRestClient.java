@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -23,8 +23,13 @@ import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 @Scope(SCOPE_CUCUMBER_GLUE)
 public class AppRestClient {
 
-    private static final String ACCOUNT_PATH = "account/v1";
     private static final String SERVER_URL = "http://localhost";
+
+    private static final String MANAGEMENT_PATH = "account";
+    private static final String REGISTER_ENDPOINT = "register";
+    private static final String GENERATE_TOKEN_ENDPOINT = "generate";
+    private static final String GREET_ENDPOINT = "greet";
+    private static final String APP_API_VERSION = "v1";
 
     @LocalServerPort
     private int port;
@@ -37,19 +42,19 @@ public class AppRestClient {
 
     private URI getRegisterEndpoint() {
         return UriComponentsBuilder.fromUri(getBaseURI())
-                .pathSegment(ACCOUNT_PATH, "register")
+                .pathSegment(MANAGEMENT_PATH, APP_API_VERSION, REGISTER_ENDPOINT)
                 .build().toUri();
     }
 
     private URI getGenerateEndpoint() {
         return UriComponentsBuilder.fromUri(getBaseURI())
-                .pathSegment(ACCOUNT_PATH, "generate")
+                .pathSegment(MANAGEMENT_PATH, APP_API_VERSION, GENERATE_TOKEN_ENDPOINT)
                 .build().toUri();
     }
 
     private URI getGreetEndpoint() {
         return UriComponentsBuilder.fromUri(getBaseURI())
-                .path("greet")
+                .pathSegment(APP_API_VERSION, GREET_ENDPOINT)
                 .build().toUri();
     }
 
@@ -67,5 +72,16 @@ public class AppRestClient {
         } catch (HttpClientErrorException e) {
             return new ResponseEntity<>(e.getStatusCode());
         }
+    }
+
+    public ResponseEntity<UserAccount> generateToken(String token) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        return restTemplate.exchange(
+                getGreetEndpoint(), HttpMethod.GET, requestEntity, UserAccount.class);
     }
 }

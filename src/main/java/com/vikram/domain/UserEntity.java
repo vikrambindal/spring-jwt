@@ -1,5 +1,6 @@
 package com.vikram.domain;
 
+import com.vikram.controller.dto.UserAccount;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,4 +25,8 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public UserAccount adaptToUserAccount() {
+        return new UserAccount(getFirstName(), getLastName(), getEmail(), "SENSITIVE");
+    }
 }
