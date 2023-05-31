@@ -1,5 +1,6 @@
 package com.vikram.config;
 
+import com.vikram.controller.dto.GreetResponse;
 import com.vikram.controller.dto.TokenResponse;
 import com.vikram.controller.dto.UserAccount;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +75,7 @@ public class AppRestClient {
         }
     }
 
-    public ResponseEntity<UserAccount> generateToken(String token) {
+    public ResponseEntity<GreetResponse> generateToken(String token) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
@@ -82,6 +83,6 @@ public class AppRestClient {
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
         return restTemplate.exchange(
-                getGreetEndpoint(), HttpMethod.GET, requestEntity, UserAccount.class);
+                getGreetEndpoint(), HttpMethod.GET, requestEntity, GreetResponse.class);
     }
 }

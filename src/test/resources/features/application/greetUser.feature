@@ -33,9 +33,7 @@ Feature: Greet User
       | $.body.token | notNull  |          |
     When user invokes greeting application
     Then user is greeted with their details in response
-      | property         | matcher | expected                      |
-      | $.status         | is      | OK                            |
-      | $.body.firstName | is      | Clark                         |
-      | $.body.lastName  | is      | Kent                          |
-      | $.body.email     | is      | clark.kent@justice-league.com |
-      | $.body.password  | is      | SENSITIVE                     |
+      | property   | matcher  | expected           |
+      | $.status   | is       | OK                 |
+      | $.body     | contains | msg                |
+      | $.body.msg | is       | Welcome Clark Kent |

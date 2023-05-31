@@ -1,5 +1,6 @@
 package com.vikram.controller;
 
+import com.vikram.controller.dto.GreetResponse;
 import com.vikram.controller.dto.UserAccount;
 import com.vikram.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,10 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @GetMapping(value = "/greet", produces = "application/json")
-    public UserAccount greetUser(@RequestHeader("Authorization") String bearerToken) {
+    public GreetResponse greetUser(@RequestHeader("Authorization") String bearerToken) {
 
-        return applicationService.extractTokenInformation(bearerToken);
+        UserAccount userAccount = applicationService.extractTokenInformation(bearerToken);
+        return new GreetResponse(String.format("Welcome %s %s", userAccount.firstName(), userAccount.lastName()));
 
     }
 }

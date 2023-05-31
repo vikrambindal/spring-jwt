@@ -35,13 +35,15 @@ Application demonstrates a basic configuration and implementation of JWT with Sp
           "password": "YOUR PASSWORD"
         }
       ```
-    - GET /v1/greet : Secured resource that greets the user for the passed Authorization headerJWT Token (Bearer Token)
+    - GET /v1/greet : Secured resource that greets the user for a valid authenticated JWT Token
+      - Header:
+      ```
+        Authorization: Bearer <YOUR JWT TOKEN>
+      ```
+      - Response:
       ```
         {
-          "firstName": "YOUR NAME",
-          "lastName" : "YOUR LAST NAME",
-          "email" : "YOUR EMAIL",
-          "password": "SENSITIVE"
+          "msg": "Welcome <YOUR FIRST NAME> <YOUR LAST NAME>"
         }
       ```
     - DB: localhost:<APP_PORT>/h2_console

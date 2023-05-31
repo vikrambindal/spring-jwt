@@ -3,8 +3,8 @@ package com.vikram.steps;
 import com.google.gson.Gson;
 import com.jayway.jsonassert.JsonAssert;
 import com.jayway.jsonassert.JsonAsserter;
+import com.vikram.controller.dto.GreetResponse;
 import com.vikram.controller.dto.TokenResponse;
-import com.vikram.controller.dto.UserAccount;
 import com.vikram.helper.TestContext;
 import io.cucumber.java.en.Then;
 import org.apache.commons.lang3.StringUtils;
@@ -29,19 +29,15 @@ public class UserAssertionSteps {
         ResponseEntity<TokenResponse> tokenResponseResponseEntity =
                 (ResponseEntity<TokenResponse>) testContext.getFromContext(TestContext.TOKEN_RESPONSE);
 
-        String json = new Gson().toJson(tokenResponseResponseEntity);
-        JsonAsserter asserter = JsonAssert.with(json);
-        validatePropertyMatches(assertions, asserter);
+        validatePropertyMatches(assertions, tokenResponseResponseEntity);
     }
 
     @Then("user is greeted with their details in response")
     public void userGreetedWithDetails(List<Map<String, String>> assertions) {
-        ResponseEntity<UserAccount> userAccountResponseEntity =
-                (ResponseEntity<UserAccount>) testContext.getFromContext(TestContext.USER_ACCOUNT);
+        ResponseEntity<GreetResponse> userAccountResponseEntity =
+                (ResponseEntity<GreetResponse>) testContext.getFromContext(TestContext.GREET_RESPONSE);
 
-        String json = new Gson().toJson(userAccountResponseEntity);
-        JsonAsserter asserter = JsonAssert.with(json);
-        validatePropertyMatches(assertions, asserter);
+        validatePropertyMatches(assertions, userAccountResponseEntity);
     }
 
     @Then("token is generated with response")
@@ -49,12 +45,12 @@ public class UserAssertionSteps {
         ResponseEntity<TokenResponse> tokenResponseResponseEntity =
                 (ResponseEntity<TokenResponse>) testContext.getFromContext(TestContext.TOKEN_RESPONSE);
 
-        String json = new Gson().toJson(tokenResponseResponseEntity);
-        JsonAsserter asserter = JsonAssert.with(json);
-        validatePropertyMatches(assertions, asserter);
+        validatePropertyMatches(assertions, tokenResponseResponseEntity);
     }
 
-    private void validatePropertyMatches(List<Map<String, String>> assertions, JsonAsserter asserter) {
+    private void validatePropertyMatches(List<Map<String, String>> assertions, ResponseEntity tokenResponseResponseEntity) {
+        String json = new Gson().toJson(tokenResponseResponseEntity);
+        JsonAsserter asserter = JsonAssert.with(json);
         for (Map<String, String> a : assertions) {
             String path = a.get("property");
             String matcher = a.get("matcher");

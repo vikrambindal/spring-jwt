@@ -1,6 +1,7 @@
 package com.vikram.steps;
 
 import com.vikram.config.AppRestClient;
+import com.vikram.controller.dto.GreetResponse;
 import com.vikram.controller.dto.TokenResponse;
 import com.vikram.controller.dto.UserAccount;
 import com.vikram.helper.TestContext;
@@ -35,8 +36,8 @@ public class UserActionSteps {
     public void userInvokesGreetApplication() {
         ResponseEntity<TokenResponse> tokenResponseResponseEntity =
                 (ResponseEntity<TokenResponse>) testContext.getFromContext(TestContext.TOKEN_RESPONSE);
-        ResponseEntity<UserAccount> userAccountResponseEntity =
+        ResponseEntity<GreetResponse> userAccountResponseEntity =
                 appRestClient.generateToken(tokenResponseResponseEntity.getBody().token());
-        testContext.addToContext(TestContext.USER_ACCOUNT, userAccountResponseEntity);
+        testContext.addToContext(TestContext.GREET_RESPONSE, userAccountResponseEntity);
     }
 }
