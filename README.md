@@ -26,6 +26,7 @@ Application demonstrates a basic configuration and implementation of JWT with Sp
           "lastName" : "YOUR LAST NAME",
           "email" : "YOUR EMAIL",
           "password": "YOUR PASSWORD"
+          "role":  "USER or ADMIN"
         }
       ```
     - POST /account/v1/generate : Generates a JWT Token for a provided email and password
@@ -35,7 +36,7 @@ Application demonstrates a basic configuration and implementation of JWT with Sp
           "password": "YOUR PASSWORD"
         }
       ```
-    - GET /v1/greet : Secured resource that greets the user for a valid authenticated JWT Token
+    - GET /v1/greet : Secured resource for ADMIN or USER role that greets the user for a valid authenticated JWT Token
       - Header:
       ```
         Authorization: Bearer <YOUR JWT TOKEN>
@@ -45,6 +46,20 @@ Application demonstrates a basic configuration and implementation of JWT with Sp
         {
           "msg": "Welcome <YOUR FIRST NAME> <YOUR LAST NAME>"
         }
+      ```
+    - GET /v1/users : Secured resource for ADMIN role that lists the user for a valid authenticated JWT Token
+      - Header:
+      ```
+        Authorization: Bearer <YOUR JWT TOKEN>
+      ```
+      - Response:
+      ```
+        [
+         {
+          "name": "FIRSTNAME LASTNAME",
+          "email": "YOUR EMAIL"          
+         }
+        ]
       ```
     - DB: localhost:<APP_PORT>/h2_console
 

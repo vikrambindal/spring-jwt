@@ -2,6 +2,9 @@ package com.vikram.service;
 
 import com.vikram.controller.dto.TokenResponse;
 import com.vikram.controller.dto.UserAccount;
+import com.vikram.controller.dto.UserResponse;
+
+import java.util.List;
 
 public interface ApplicationService {
 
@@ -10,4 +13,6 @@ public interface ApplicationService {
     TokenResponse generateToken(UserAccount userAccount);
 
     UserAccount extractTokenInformation(String jwtToken);
+
+    List<UserResponse> getUsers();
 }

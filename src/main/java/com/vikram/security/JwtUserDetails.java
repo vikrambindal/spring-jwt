@@ -19,7 +19,7 @@ public class JwtUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(userEntity.getRole().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + userEntity.getRole().name()));
     }
 
     @Override

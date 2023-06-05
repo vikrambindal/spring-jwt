@@ -7,7 +7,8 @@ Feature: Greet User
           'firstName': 'Clark',
           'lastName': 'Kent',
           'email': 'clark.kent@justice-league.com',
-          'password': 'martha'
+          'password': 'martha',
+          'role': 'USER'
         }
       """
     And a user registers in the application

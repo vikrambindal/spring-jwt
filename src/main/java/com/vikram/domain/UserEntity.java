@@ -27,6 +27,6 @@ public class UserEntity {
     private Role role;
 
     public UserAccount adaptToUserAccount() {
-        return new UserAccount(getFirstName(), getLastName(), getEmail(), getPassword());
+        return new UserAccount(getFirstName(), getLastName(), getEmail(), getPassword(), getRole());
     }
 }

@@ -7,7 +7,8 @@ Feature: Register User
           'firstName': 'Clark',
           'lastName': 'Kent',
           'email': 'clark.kent@justice-league.com',
-          'password': 'martha'
+          'password': 'martha',
+          'role': 'USER'
         }
       """
     When a user registers in the application

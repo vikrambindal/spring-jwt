@@ -2,15 +2,18 @@ package com.vikram.service;
 
 import com.vikram.controller.dto.TokenResponse;
 import com.vikram.controller.dto.UserAccount;
+import com.vikram.controller.dto.UserResponse;
 import com.vikram.domain.Role;
 import com.vikram.domain.UserEntity;
 import com.vikram.repository.UserEntityRepository;
 import com.vikram.security.JwtService;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,7 +29,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         UserEntity userEntity = userAccount.adaptToUserEntity();
         userEntity.setPassword(passwordEncoder.encode(userAccount.password()));
-        userEntity.setRole(Role.USER);
+        userEntity.setRole(userAccount.role());
         userEntityRepository.save(userEntity);
         String jwtToken = jwtService.generateToken(userAccount.email());
         return new TokenResponse(jwtToken);
@@ -55,5 +58,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         return userEntityOptional.get().adaptToUserAccount();
+    }
+
+    @Override
+    public List<UserResponse> getUsers() {
+        List<UserEntity> userEntityList = userEntityRepository.findAll();
+        return userEntityList.stream()
+                .map(userEntity ->
+                        new UserResponse(Strings.concat(userEntity.getFirstName(), userEntity.getLastName()),
+                                userEntity.getEmail()))
+                .toList();
     }
 }
