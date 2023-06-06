@@ -1,4 +1,4 @@
-package com.vikram.security;
+package com.vikram.service;
 
 import com.vikram.domain.UserEntity;
 import io.jsonwebtoken.Claims;
@@ -19,21 +19,24 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @Service
-public class JwtService {
+public class JWTHelperServiceImpl implements JWTHelperService {
 
     // src: https://allkeysgenerator.com/
     private final String SIGN_KEY = "792442264529482B4D6251655468576D5A7134743777217A25432A462D4A614E";
     private final String AUDIENCE = "application";
     private final String AUTH_HEADER_ROLES = "roles";
 
+    @Override
     public String extractUsername(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
     }
 
+    @Override
     public String generateToken(UserEntity userEntity) {
         return generateToken(Map.of(AUTH_HEADER_ROLES, userEntity.getRole().name()), userEntity.getEmail());
     }
 
+    @Override
     public String generateToken(Map<String, String> claimMap, String email) {
         return Jwts
                 .builder()
@@ -48,11 +51,13 @@ public class JwtService {
                 .compact();
     }
 
+    @Override
     public boolean isTokenValid(String jwtToken, UserDetails userDetails) {
         String tokenSubject = extractUsername(jwtToken);
         return tokenSubject.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken);
     }
 
+    @Override
     public Claims extractAllClaims(String jwtToken) {
         return Jwts
                 .parserBuilder()

@@ -1,6 +1,7 @@
 package com.vikram.security;
 
 import com.vikram.domain.UserEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,14 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-public class JwtUserDetails implements UserDetails {
+@RequiredArgsConstructor
+public class JWTUserDetails implements UserDetails {
 
     private final UserEntity userEntity;
-
-    public JwtUserDetails(UserEntity userEntity) {
-
-        this.userEntity = userEntity;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

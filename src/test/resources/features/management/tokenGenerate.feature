@@ -48,6 +48,6 @@ Feature: Generate Token
       """
     When a user generates a token
     Then token is generated with response
-      | property | matcher      | expected  |
-      | $.status | is           | FORBIDDEN |
-      | $.body   | isNotDefined |           |
+      | property | matcher      | expected     |
+      | $.status | is           | UNAUTHORIZED |
+      | $.body   | isNotDefined |              |

@@ -5,7 +5,6 @@ import com.vikram.controller.dto.UserAccount;
 import com.vikram.controller.dto.UserResponse;
 import com.vikram.domain.UserEntity;
 import com.vikram.repository.UserEntityRepository;
-import com.vikram.security.JwtService;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
@@ -20,7 +19,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ApplicationServiceImpl implements ApplicationService {
 
-    private final JwtService jwtService;
+    private final JWTHelperServiceImpl jwtHelperService;
     private final UserEntityRepository userEntityRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -31,7 +30,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         userEntity.setPassword(passwordEncoder.encode(userAccount.password()));
         userEntity.setRole(userAccount.role());
         userEntityRepository.save(userEntity);
-        String jwtToken = jwtService.generateToken(userEntity);
+        String jwtToken = jwtHelperService.generateToken(userEntity);
         return new TokenResponse(jwtToken);
     }
 
@@ -44,14 +43,14 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new UsernameNotFoundException("Invalid user");
         }
 
-        final var jwtToken = jwtService.generateToken(userEntity.get());
+        final var jwtToken = jwtHelperService.generateToken(userEntity.get());
         return new TokenResponse(jwtToken);
     }
 
     @Override
     public UserAccount extractTokenInformation(String jwtToken) {
         jwtToken = jwtToken.substring("Bearer ".length());
-        String email = jwtService.extractUsername(jwtToken);
+        String email = jwtHelperService.extractUsername(jwtToken);
         Optional<UserEntity> userEntityOptional = userEntityRepository.findByEmail(email);
         if (userEntityOptional.isEmpty()) {
             throw new UsernameNotFoundException("Invalid user");
@@ -72,6 +71,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Claims getAllClaims(String jwtToken) {
-        return jwtService.extractAllClaims(jwtToken);
+        return jwtHelperService.extractAllClaims(jwtToken);
     }
 }

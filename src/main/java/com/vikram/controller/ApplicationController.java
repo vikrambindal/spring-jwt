@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("v1")
 @RequiredArgsConstructor
-
 public class ApplicationController {
 
     private final ApplicationService applicationService;

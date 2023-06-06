@@ -1,6 +1,6 @@
-package com.vikram.security.config;
+package com.vikram.security.filter;
 
-import com.vikram.security.JwtService;
+import com.vikram.service.JWTHelperService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,30 +18,33 @@ import java.io.IOException;
 
 @Component
 @AllArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JWTTokenFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BEARER_TOKEN = "Bearer ";
+    private final JWTHelperService jwtHelperService;
     private final UserDetailsService userDetailService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
+                                    final FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER_TOKEN)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String jwtToken = authorizationHeader.substring(7);
-        final String email = jwtService.extractUsername(jwtToken);
+        final String jwtToken = authorizationHeader.substring(BEARER_TOKEN.length());
+        final String email = jwtHelperService.extractUsername(jwtToken);
 
         // Check is we have a valid email but the token doesn't already exist in security context
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = userDetailService.loadUserByUsername(email);
-            if (jwtService.isTokenValid(jwtToken, userDetails)) {
+            if (jwtHelperService.isTokenValid(jwtToken, userDetails)) {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null,
