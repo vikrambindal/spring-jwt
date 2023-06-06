@@ -1,5 +1,6 @@
 package com.vikram.security;
 
+import com.vikram.domain.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,27 +8,30 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
 
     // src: https://allkeysgenerator.com/
-    private static final String SIGN_KEY = "792442264529482B4D6251655468576D5A7134743777217A25432A462D4A614E";
+    private final String SIGN_KEY = "792442264529482B4D6251655468576D5A7134743777217A25432A462D4A614E";
+    private final String AUDIENCE = "application";
+    private final String AUTH_HEADER_ROLES = "roles";
 
     public String extractUsername(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
     }
 
-    public String generateToken(String email) {
-        return generateToken(Map.of(), email);
+    public String generateToken(UserEntity userEntity) {
+        return generateToken(Map.of(AUTH_HEADER_ROLES, userEntity.getRole().name()), userEntity.getEmail());
     }
 
     public String generateToken(Map<String, String> claimMap, String email) {
@@ -35,6 +39,9 @@ public class JwtService {
                 .builder()
                 .setClaims(claimMap)
                 .setSubject(email)
+                .setId(UUID.randomUUID().toString())
+                .setAudience(AUDIENCE)
+                .setIssuer(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString())
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.HOURS)))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -46,18 +53,18 @@ public class JwtService {
         return tokenSubject.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken);
     }
 
-    private <T> T extractClaim(String jwtToken, Function<Claims, T> function) {
-        Claims claims = extractAllClaims(jwtToken);
-        return function.apply(claims);
-    }
-
-    private Claims extractAllClaims(String jwtToken) {
+    public Claims extractAllClaims(String jwtToken) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(jwtToken)
                 .getBody();
+    }
+
+    private <T> T extractClaim(String jwtToken, Function<Claims, T> function) {
+        Claims claims = extractAllClaims(jwtToken);
+        return function.apply(claims);
     }
 
     private Key getSigningKey() {

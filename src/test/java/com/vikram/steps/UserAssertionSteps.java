@@ -6,7 +6,10 @@ import com.jayway.jsonassert.JsonAsserter;
 import com.vikram.controller.dto.GreetResponse;
 import com.vikram.controller.dto.TokenResponse;
 import com.vikram.helper.TestContext;
+import com.vikram.service.ApplicationService;
 import io.cucumber.java.en.Then;
+import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 
@@ -15,14 +18,11 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 
+@RequiredArgsConstructor
 public class UserAssertionSteps {
 
     private final TestContext testContext;
-
-    public UserAssertionSteps(TestContext testContext) {
-
-        this.testContext = testContext;
-    }
+    private final ApplicationService applicationService;
 
     @Then("a user is registered successfully with response")
     public void userRegisteredSuccesfully(List<Map<String, String>> assertions) {
@@ -48,8 +48,17 @@ public class UserAssertionSteps {
         validatePropertyMatches(assertions, tokenResponseResponseEntity);
     }
 
-    private void validatePropertyMatches(List<Map<String, String>> assertions, ResponseEntity tokenResponseResponseEntity) {
-        String json = new Gson().toJson(tokenResponseResponseEntity);
+    @Then("generated token contains claims")
+    public void generatedTokenContainsClaims(List<Map<String, String>> assertions) {
+        ResponseEntity<TokenResponse> tokenResponseResponseEntity =
+                (ResponseEntity<TokenResponse>) testContext.getFromContext(TestContext.TOKEN_RESPONSE);
+
+        Claims claims = applicationService.getAllClaims(tokenResponseResponseEntity.getBody().token());
+        validatePropertyMatches(assertions, claims);
+    }
+
+    private void validatePropertyMatches(List<Map<String, String>> assertions, Object object) {
+        String json = new Gson().toJson(object);
         JsonAsserter asserter = JsonAssert.with(json);
         for (Map<String, String> a : assertions) {
             String path = a.get("property");

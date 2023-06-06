@@ -17,3 +17,8 @@ Feature: Register User
       | $.status     | is       | OK       |
       | $.body       | contains | token    |
       | $.body.token | notNull  |          |
+    Then generated token contains claims
+      | property | matcher | expected                      |
+      | $.sub    | is      | clark.kent@justice-league.com |
+      | $.aud    | is      | application                   |
+      | $.roles  | is      | USER                          |

@@ -3,10 +3,10 @@ package com.vikram.service;
 import com.vikram.controller.dto.TokenResponse;
 import com.vikram.controller.dto.UserAccount;
 import com.vikram.controller.dto.UserResponse;
-import com.vikram.domain.Role;
 import com.vikram.domain.UserEntity;
 import com.vikram.repository.UserEntityRepository;
 import com.vikram.security.JwtService;
+import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,7 +31,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         userEntity.setPassword(passwordEncoder.encode(userAccount.password()));
         userEntity.setRole(userAccount.role());
         userEntityRepository.save(userEntity);
-        String jwtToken = jwtService.generateToken(userAccount.email());
+        String jwtToken = jwtService.generateToken(userEntity);
         return new TokenResponse(jwtToken);
     }
 
@@ -44,7 +44,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new UsernameNotFoundException("Invalid user");
         }
 
-        final var jwtToken = jwtService.generateToken(userEntity.get().getEmail());
+        final var jwtToken = jwtService.generateToken(userEntity.get());
         return new TokenResponse(jwtToken);
     }
 
@@ -68,5 +68,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                         new UserResponse(Strings.concat(userEntity.getFirstName(), userEntity.getLastName()),
                                 userEntity.getEmail()))
                 .toList();
+    }
+
+    @Override
+    public Claims getAllClaims(String jwtToken) {
+        return jwtService.extractAllClaims(jwtToken);
     }
 }
