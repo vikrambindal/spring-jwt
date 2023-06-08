@@ -50,7 +50,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public UserAccount extractTokenInformation(String jwtToken) {
         jwtToken = jwtToken.substring("Bearer ".length());
-        String email = jwtHelperService.extractUsername(jwtToken);
+        String email = jwtHelperService.verifyAndExtractClaims(jwtToken, Claims::getSubject);
         Optional<UserEntity> userEntityOptional = userEntityRepository.findByEmail(email);
         if (userEntityOptional.isEmpty()) {
             throw new UsernameNotFoundException("Invalid user");

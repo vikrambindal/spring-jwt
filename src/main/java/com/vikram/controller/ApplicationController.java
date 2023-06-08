@@ -24,6 +24,7 @@ public class ApplicationController {
     @GetMapping(value = "/greet", produces = "application/json")
     public GreetResponse greetUser(@RequestHeader("Authorization") String bearerToken) {
 
+
         UserAccount userAccount = applicationService.extractTokenInformation(bearerToken);
         return new GreetResponse(String.format("Welcome %s %s", userAccount.firstName(), userAccount.lastName()));
 

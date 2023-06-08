@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class ManagementController {
 
     private final ApplicationService applicationService;
+
     @PostMapping("/register")
     public TokenResponse registerUser(@RequestBody UserAccount userAccount) {
         log.info("Registering User REQ {}", userAccount);

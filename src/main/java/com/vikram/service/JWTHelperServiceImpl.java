@@ -2,6 +2,7 @@ package com.vikram.service;
 
 import com.vikram.domain.UserEntity;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -27,17 +28,13 @@ public class JWTHelperServiceImpl implements JWTHelperService {
     private final String AUTH_HEADER_ROLES = "roles";
 
     @Override
-    public String extractUsername(String jwtToken) {
-        return extractClaim(jwtToken, Claims::getSubject);
-    }
-
-    @Override
     public String generateToken(UserEntity userEntity) {
         return generateToken(Map.of(AUTH_HEADER_ROLES, userEntity.getRole().name()), userEntity.getEmail());
     }
 
     @Override
     public String generateToken(Map<String, String> claimMap, String email) {
+
         return Jwts
                 .builder()
                 .setClaims(claimMap)
@@ -67,6 +64,12 @@ public class JWTHelperServiceImpl implements JWTHelperService {
                 .getBody();
     }
 
+    @Override
+    public <T> T verifyAndExtractClaims(String jwtToken, Function<Claims, T> function) {
+        Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(jwtToken);
+        return function.apply(claimsJws.getBody());
+    }
+
     private <T> T extractClaim(String jwtToken, Function<Claims, T> function) {
         Claims claims = extractAllClaims(jwtToken);
         return function.apply(claims);
@@ -79,5 +82,9 @@ public class JWTHelperServiceImpl implements JWTHelperService {
 
     private boolean isTokenExpired(String jwtToken) {
         return extractClaim(jwtToken, Claims::getExpiration).before(Date.from(Instant.now()));
+    }
+
+    private String extractUsername(String jwtToken) {
+        return extractClaim(jwtToken, Claims::getSubject);
     }
 }
