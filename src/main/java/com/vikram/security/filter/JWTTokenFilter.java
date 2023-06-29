@@ -34,7 +34,7 @@ public class JWTTokenFilter extends OncePerRequestFilter {
                                     final FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        final String authorizationHeader = request.getHeader(AUTHORIZATION);
 
         if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER_TOKEN)) {
             filterChain.doFilter(request, response);
